@@ -1,0 +1,2 @@
+[master]
+1.1.1.1 ansible_user=user ansible_port=33223

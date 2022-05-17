@@ -1,0 +1,269 @@
+---
+- hosts: localhost
+
+  tasks:
+#    - name: Configure macos
+#      ansible.builtin.shell: scripts/osx_setup.sh > scripts/osx_setup_log.txt
+#      args:
+#        executable: /bin/zsh
+#        creates: scripts/osx_setup_log.txt
+
+    - name: Install homebrew
+      include_role:
+        name: geerlingguy.mac.homebrew
+
+    - name: Make sure homebrew bin is in path
+      ansible.builtin.lineinfile:
+        path: /etc/paths
+        state: present
+        line: '/opt/homebrew/bin'
+      become: true
+      become_user: root
+
+    - name: Tap brew repo with Fira Code font
+      ansible.builtin.shell: |
+        brew tap homebrew/cask-fonts
+
+    - name: Install apps via brew casks
+      community.general.homebrew_cask:
+        name: "{{ item }}"
+      ignore_errors: true
+      with_items:
+       - docker
+       - google-chrome
+       - telegram
+       - visual-studio-code
+       - zoom
+       - the-unarchiver
+       - discord
+       - arduino
+       - appcleaner
+       - iterm2
+       - font-fira-code
+       - font-fira-mono
+       - font-fira-sans
+       - postman
+       - tor-browser
+       - multitouch #gesture
+       - tunnelblick
+       - disk-drill
+       - outline-manager
+       - paw
+       - shottr #screenshots
+       - veracrypt
+       - dropbox
+       - temurin #java 18
+       - steam
+       - battle-net
+      tags:
+        - only-casks
+
+    - name: "Install homebrew packages"
+      community.general.homebrew:
+        name: [
+          'htop',
+          'micro',
+          'nvm',
+          'postgresql',
+          # 'mariadb',
+          'bash',
+          'bash-completion@2',
+          'age',
+          'go',
+          'vegeta',
+          'jenv',
+          'openjdk@17',
+          'openjdk@11',
+          'mysql',
+        ]
+        state: present
+        update_homebrew: yes
+      tags:
+        - only-formulas
+
+
+
+
+
+    - name: "Ensure new bash in /etc/shells"
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/shells
+        line: /opt/homebrew/bin/bash
+        create: yes
+      tags:
+        - rollback-to-bash
+
+    - name: "Change default shell to bash"
+      shell: chsh -s /opt/homebrew/bin/bash $(whoami)
+      tags:
+        - rollback-to-bash
+
+    - name: "Put bash-completion script in .bash-profile"
+      ansible.builtin.lineinfile:
+        path: ~/.bash_profile
+        line: '[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"'
+        create: yes
+      tags:
+        - rollback-to-bash
+
+
+
+
+
+
+    - name: "Add jenv to PATH"
+      ansible.builtin.blockinfile:
+        path: ~/.bash_profile
+        block: |
+          export PATH="$HOME/.jenv/bin:$PATH"
+          eval "$(jenv init -)"
+        marker: '# jenv init'
+      tags:
+        - java
+
+    - name: "Use Temurin's Java with jenv"
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          source ~/.bash_profile
+          jenv enable-plugin export
+          jenv add /Library/Java/JavaVirtualMachines/temurin-18.jdk/Contents/Home
+          jenv add /opt/homebrew/opt/openjdk@17
+          jenv add /opt/homebrew/opt/openjdk@11
+          jenv global 11
+      tags:
+        - java
+
+
+
+
+
+    - name: Tap brew repo with MongoDB
+      ansible.builtin.shell: |
+        brew tap mongodb/brew
+      tags:
+        - mongodb
+
+    - name: "Install MongoDB"
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          source ~/.bash_profile
+          brew install mongodb-community
+      tags:
+        - mongodb
+
+
+
+
+
+    - name: "Create .nvm folder in home directory"
+      ansible.builtin.file:
+        path: ~/.nvm
+        state: directory
+        mode: 0755
+      tags:
+        - nodejs
+
+    - name: "Put nvm script in .bash-profile"
+      ansible.builtin.blockinfile:
+        path: ~/.bash_profile
+        block: |
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh" # This loads nvm
+          [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+        marker: '# nvm init'
+      tags:
+        - nodejs
+
+    - name: "Install NodeJS 16"
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          source ~/.bash_profile
+          nvm install 16
+          nvm alias default 16
+      tags:
+        - nodejs
+
+    - name: "Install nodemon"
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          source ~/.bash_profile
+          npm i -g nodemon
+      tags:
+        - nodejs
+
+
+
+
+
+    - name: Configure git to use vscode as default editor
+      community.general.git_config:
+        name: core.editor
+        scope: global
+        value: code
+      tags:
+        - git
+
+    - name: Configure git username
+      community.general.git_config:
+        name: user.name
+        scope: global
+        value: Yanislav Igonin
+      tags:
+        - git
+
+    - name: Configure git email
+      community.general.git_config:
+        name: user.email
+        scope: global
+        value: yanislavdabest@gmail.com
+      tags:
+        - git
+
+
+
+
+    - name: Mkdir for .ssh
+      file:
+       path: /Users/{{ lookup('env', 'USER') }}/.ssh
+       state: directory
+      tags:
+        - ssh
+
+
+
+    # Battle.net need to be installed from installer installed from brew
+    # Lolwut
+    - name: Install Battle.net
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: open /opt/homebrew/Caskroom/battle-net/latest/Battle.net-Setup.app
+
+
+    
+    - name: Configure MySQL
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: mysql_secure_installation
+      tags:
+        - mysql
+
+    
+    # here we can add db dump
+
+
+
+#    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
+#      community.crypto.openssh_keypair:
+#        path: /Users/{{ lookup('env', 'USER') }}/.ssh/id_rsa
+
+
+
+#    - name: "Install from Mac app store"
+#      shell: mas install {{ item }}
+#      with_items:
+#        - 1451685025 # wireguard
