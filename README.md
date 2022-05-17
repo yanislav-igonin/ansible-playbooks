@@ -1,2 +1,2 @@
-# ansible-macos-playbook
-Ansible playbook for macOS configuration.
+# ansible-playbooks
+Ansible playbooks for macOS and Ubuntu servers.
