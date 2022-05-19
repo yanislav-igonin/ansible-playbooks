@@ -158,6 +158,25 @@
 
 
 
+    - name: Tap brew repo with Heroku CLI
+      ansible.builtin.shell: |
+        brew tap heroku/brew
+      tags:
+        - heroku
+
+    - name: "Install MongoDB"
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          source ~/.bash_profile
+          brew install heroku
+      tags:
+        - heroku
+
+
+
+
+
     - name: "Create .nvm folder in home directory"
       ansible.builtin.file:
         path: ~/.nvm
