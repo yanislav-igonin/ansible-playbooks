@@ -2,9 +2,9 @@
 - hosts: worker
   become: true
   vars:
-    user_name: opa
+    user_name: hobo
     copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
-    packages_list: [ 'git', 'ufw', 'htop', 'acl', 'micro' ]
+    packages_list: [ 'micro' ]
 
   tasks:
     - name: Update and upgrade apt packages
