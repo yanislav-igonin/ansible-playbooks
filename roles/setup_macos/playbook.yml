@@ -55,6 +55,7 @@
        - temurin #java 18
        - steam
        - battle-net
+       - transmission # torrent client
       tags:
         - only-casks
 
