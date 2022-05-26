@@ -272,6 +272,26 @@
       tags:
         - mysql
 
+    - name: Git Completition
+      ansible.builtin.shell:
+        executable: /opt/homebrew/bin/bash
+        cmd: |
+          curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
+          chmod +x ~/.git-completion.bash
+      tags:
+        - git
+
+    - name: "Put git completion script in .bash-profile"
+      ansible.builtin.blockinfile:
+        path: ~/.bash_profile
+        block: |
+          if [ -f ~/.git-completion.bash ]; then
+            . ~/.git-completion.bash
+          fi
+        marker: '# git completion init'
+      tags:
+        - git
+
     
     # here we can add db dump
 
