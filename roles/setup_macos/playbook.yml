@@ -76,6 +76,7 @@
           'openjdk@17',
           'openjdk@11',
           'mysql',
+          'exa'
         ]
         state: present
         update_homebrew: yes
@@ -291,6 +292,13 @@
         marker: '# git completion init'
       tags:
         - git
+
+    - name: "Make alias for exa with ls"
+      ansible.builtin.blockinfile:
+        path: ~/.bash_profile
+        block: |
+          alias ls="exa"
+        marker: '# exa ls alias'
 
     
     # here we can add db dump
