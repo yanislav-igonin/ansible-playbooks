@@ -57,6 +57,7 @@
        - battle-net
        - transmission # torrent client
        - gifox # to record screen as gif
+       - raycast # spotlight replacement
       tags:
         - only-casks
 
