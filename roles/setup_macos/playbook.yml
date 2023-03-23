@@ -24,7 +24,7 @@
       ansible.builtin.shell: |
         brew tap homebrew/cask-fonts
 
-    - name: Install apps via brew casks
+    - name: Install homebrew packages (casks)
       community.general.homebrew_cask:
         name: "{{ item }}"
       ignore_errors: true
@@ -61,7 +61,7 @@
       tags:
         - only-casks
 
-    - name: "Install homebrew packages"
+    - name: Install homebrew packages (formulas)
       community.general.homebrew:
         name: [
           'htop',
