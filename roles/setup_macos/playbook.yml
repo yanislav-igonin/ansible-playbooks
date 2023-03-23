@@ -58,6 +58,7 @@
        - transmission # torrent client
        - gifox # to record screen as gif
        - raycast # spotlight replacement
+       - tableplus # relational db native gui client
       tags:
         - only-casks
 
