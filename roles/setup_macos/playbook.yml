@@ -70,8 +70,8 @@
           'nvm',
           'postgresql',
           # 'mariadb',
-          'bash',
-          'bash-completion@2',
+          # 'bash',
+          # 'bash-completion@2',
           'age',
           'go',
           'vegeta',
@@ -90,32 +90,25 @@
 
 
 
-    - name: "Ensure new bash in /etc/shells"
-      become: true
-      ansible.builtin.lineinfile:
-        path: /etc/shells
-        line: /opt/homebrew/bin/bash
-        create: yes
-      tags:
-        - rollback-to-bash
 
-    - name: "Change default shell to bash"
-      shell: chsh -s /opt/homebrew/bin/bash $(whoami)
-      tags:
-        - rollback-to-bash
 
-    - name: "Put bash-completion script in .bash-profile"
+    - name: "Put zsh-completion script in .zshrc"
       ansible.builtin.lineinfile:
-        path: ~/.bash_profile
+        path: ~/.zshrc
         line: '[[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"'
         create: yes
       tags:
-        - rollback-to-bash
+        - update-zsh
 
 
 
 
 
+
+
+######### JAVA ##########
+######### JAVA ##########
+######### JAVA ##########
 
     # - name: "Add jenv to PATH"
     #   ansible.builtin.blockinfile:
@@ -129,7 +122,7 @@
 
     # - name: "Use Temurin's Java with jenv"
     #   ansible.builtin.shell:
-    #     executable: /opt/homebrew/bin/bash
+    #     executable: /bin/zsh
     #     cmd: |
     #       source ~/.bash_profile
     #       jenv enable-plugin export
@@ -140,28 +133,43 @@
     #   tags:
     #     - java
 
+######### JAVA ##########
+######### JAVA ##########
+######### JAVA ##########
 
 
 
 
-    - name: Tap brew repo with MongoDB
-      ansible.builtin.shell: |
-        brew tap mongodb/brew
-      tags:
-        - mongodb
-
-    - name: "Install MongoDB"
-      ansible.builtin.shell:
-        executable: /opt/homebrew/bin/bash
-        cmd: |
-          source ~/.bash_profile
-          brew install mongodb-community
-      tags:
-        - mongodb
 
 
 
+######### MONGODB ##########
+######### MONGODB ##########
+######### MONGODB ##########
 
+    # - name: Tap brew repo with MongoDB
+    #   ansible.builtin.shell: |
+    #     brew tap mongodb/brew
+    #   tags:
+    #     - mongodb
+
+    # - name: "Install MongoDB"
+    #   ansible.builtin.shell:
+    #     executable: /bin/zsh
+    #     cmd: brew install mongodb-community
+    #   tags:
+    #     - mongodb
+
+######### MONGODB ##########
+######### MONGODB ##########
+######### MONGODB ##########
+
+
+
+
+######### HEROKU ##########
+######### HEROKU ##########
+######### HEROKU ##########
 
     # - name: Tap brew repo with Heroku CLI
     #   ansible.builtin.shell: |
@@ -171,16 +179,25 @@
 
     # - name: "Install MongoDB"
     #   ansible.builtin.shell:
-    #     executable: /opt/homebrew/bin/bash
+    #     executable: /bin/zsh
     #     cmd: |
     #       source ~/.bash_profile
     #       brew install heroku
     #   tags:
     #     - heroku
 
+######### HEROKU ##########
+######### HEROKU ##########
+######### HEROKU ##########
 
 
 
+
+
+
+######### NODEJS ##########
+######### NODEJS ##########
+######### NODEJS ##########
 
     - name: "Create .nvm folder in home directory"
       ansible.builtin.file:
@@ -192,7 +209,7 @@
 
     - name: "Put nvm script in .bash-profile"
       ansible.builtin.blockinfile:
-        path: ~/.bash_profile
+        path: ~/.zshrc
         block: |
           export NVM_DIR="$HOME/.nvm"
           [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh" # This loads nvm
@@ -203,9 +220,8 @@
 
     - name: "Install NodeJS 16"
       ansible.builtin.shell:
-        executable: /opt/homebrew/bin/bash
+        executable: /bin/zsh
         cmd: |
-          source ~/.bash_profile
           nvm install 16
           nvm alias default 16
       tags:
@@ -213,18 +229,87 @@
 
     - name: "Install nodemon"
       ansible.builtin.shell:
-        executable: /opt/homebrew/bin/bash
+        executable: /bin/zsh
         cmd: |
-          source ~/.bash_profile
           npm i -g nodemon
       tags:
         - nodejs
 
+######### NODEJS ##########
+######### NODEJS ##########
+######### NODEJS ##########
 
 
 
 
-    - name: Configure git to use vscode as default editor
+
+
+
+
+### SSH ###
+### SSH ###
+### SSH ###
+
+    - name: Mkdir for .ssh
+      file:
+       path: /Users/{{ lookup('env', 'USER') }}/.ssh
+       state: directory
+      tags:
+        - ssh
+
+### SSH ###
+### SSH ###
+### SSH ###
+
+
+
+
+
+
+### BATTLE NET ###
+### BATTLE NET ###
+### BATTLE NET ###
+
+    # Battle.net need to be installed from installer installed from brew
+    # Lolwut
+    - name: Install Battle.net
+      ansible.builtin.shell:
+        executable: /bin/zsh
+        cmd: open /opt/homebrew/Caskroom/battle-net/latest/Battle.net-Setup.app
+
+### BATTLE NET ###
+### BATTLE NET ###
+### BATTLE NET ###
+
+
+
+
+
+    
+### MYSQL ###
+### MYSQL ###
+### MYSQL ###
+
+    # - name: Configure MySQL
+    #   ansible.builtin.shell:
+    #     executable: /bin/zsh
+    #     cmd: mysql_secure_installation
+    #   tags:
+    #     - mysql
+
+### MYSQL ###
+### MYSQL ###
+### MYSQL ###
+
+
+
+
+
+### GIT ###
+### GIT ###
+### GIT ###
+
+    - name: Configure git to use VSCode as default editor
       community.general.git_config:
         name: core.editor
         scope: global
@@ -248,64 +333,52 @@
       tags:
         - git
 
-
-
-
-    - name: Mkdir for .ssh
-      file:
-       path: /Users/{{ lookup('env', 'USER') }}/.ssh
-       state: directory
-      tags:
-        - ssh
-
-
-
-    # Battle.net need to be installed from installer installed from brew
-    # Lolwut
-    - name: Install Battle.net
-      ansible.builtin.shell:
-        executable: /opt/homebrew/bin/bash
-        cmd: open /opt/homebrew/Caskroom/battle-net/latest/Battle.net-Setup.app
-
-
-    
-    # - name: Configure MySQL
-    #   ansible.builtin.shell:
-    #     executable: /opt/homebrew/bin/bash
-    #     cmd: mysql_secure_installation
-    #   tags:
-    #     - mysql
-
     - name: Git Completition
       ansible.builtin.shell:
-        executable: /opt/homebrew/bin/bash
+        executable: /bin/zsh
         cmd: |
-          curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o ~/.git-completion.bash
-          chmod +x ~/.git-completion.bash
+          curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.zsh -o ~/.git-completion.zsh
+          chmod +x ~/.git-completion.zsh
+          mkdir ~/.zsh
+          mv ~/.git-completion.zsh ~/.zsh/_git
       tags:
         - git
 
-    - name: "Put git completion script in .bash-profile"
+    - name: "Put git completion script in .zshrc"
       ansible.builtin.blockinfile:
-        path: ~/.bash_profile
+        path: ~/.zshrc
         block: |
-          if [ -f ~/.git-completion.bash ]; then
-            . ~/.git-completion.bash
-          fi
+          fpath=(~/.zsh $fpath)
         marker: '# git completion init'
       tags:
         - git
 
+### GIT ###
+### GIT ###
+### GIT ###
+
+
+
+
+
+
+### ETC ###
+### ETC ###
+### ETC ###
+
     - name: "Make alias for exa with ls"
       ansible.builtin.blockinfile:
-        path: ~/.bash_profile
+        path: ~/.zshrc
         block: |
           alias ls="exa"
         marker: '# exa ls alias'
 
+### ETC ###
+### ETC ###
+### ETC ###
+
     
     # here we can add db dump
-
 
 
 #    - name: Generate an OpenSSH keypair with the default values (4096 bits, rsa)
