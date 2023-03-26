@@ -59,6 +59,7 @@
        - gifox # to record screen as gif
        - raycast # spotlight replacement
        - tableplus # relational db native gui client
+       - notion
       tags:
         - only-casks
 
