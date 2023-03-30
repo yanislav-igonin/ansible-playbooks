@@ -81,6 +81,7 @@
           # 'openjdk@11',
           # 'mysql',
           'exa' # ls replacement
+          'bat' # cat replacement
         ]
         state: present
         update_homebrew: yes
@@ -367,12 +368,26 @@
 ### ETC ###
 ### ETC ###
 
-    - name: "Make alias for exa with ls"
+    - name: "Make alias for ls with exa"
       ansible.builtin.blockinfile:
         path: ~/.zshrc
         block: |
           alias ls="exa"
         marker: '# exa ls alias'
+
+    - name: "Make alias for cat with bat"
+      ansible.builtin.blockinfile:
+        path: ~/.zshrc
+        block: |
+          alias cat="bat"
+        marker: '# bat cat alias'
+
+    - name: "Make alias for old python with python3"
+      ansible.builtin.blockinfile:
+        path: ~/.zshrc
+        block: |
+          alias python="python3"
+        marker: '# python3 python alias'
 
 ### ETC ###
 ### ETC ###
