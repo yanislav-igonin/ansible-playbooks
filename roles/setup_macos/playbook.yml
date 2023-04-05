@@ -82,6 +82,7 @@
           # 'mysql',
           'exa' # ls replacement
           'bat' # cat replacement
+          'miniconda' # python
         ]
         state: present
         update_homebrew: yes
