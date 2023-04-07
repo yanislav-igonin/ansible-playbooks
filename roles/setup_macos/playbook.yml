@@ -80,9 +80,13 @@
           # 'openjdk@17',
           # 'openjdk@11',
           # 'mysql',
-          'exa' # ls replacement
-          'bat' # cat replacement
-          'miniconda' # python
+          'exa', # ls replacement
+          'bat', # cat replacement
+          'miniconda', # python
+          'cmake',
+          'protobuf',
+          'rust',
+          'wget'
         ]
         state: present
         update_homebrew: yes
