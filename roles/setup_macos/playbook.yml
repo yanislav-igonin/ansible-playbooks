@@ -85,7 +85,8 @@
           'cmake',
           'protobuf',
           'rust',
-          'wget'
+          'wget',
+          'git-lfs'
         ]
         state: present
         update_homebrew: yes
