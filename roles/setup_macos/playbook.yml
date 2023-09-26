@@ -60,6 +60,7 @@
        - raycast # spotlight replacement
        - tableplus # relational db native gui client
        - karabiner-elements # keyboard remapper
+       - bartender # menu bar manager
       tags:
         - only-casks
 
