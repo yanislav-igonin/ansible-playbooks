@@ -62,6 +62,7 @@
        - karabiner-elements # keyboard remapper
        - bartender # menu bar manager
        - betterdisplay # display settings and manager
+       - aldente # battery healthcare, do not let it charge to 100% to keep it healthy
       tags:
         - only-casks
 
