@@ -61,6 +61,7 @@
        - tableplus # relational db native gui client
        - karabiner-elements # keyboard remapper
        - bartender # menu bar manager
+       - betterdisplay # display settings and manager
       tags:
         - only-casks
 
