@@ -60,7 +60,7 @@
        - raycast # spotlight replacement
        - tableplus # relational db native gui client
        - karabiner-elements # keyboard remapper
-      #  - bartender # menu bar manager - DOWNLOAD VERSION 5, BREW HAS OLD ONE (4)
+       - bartender # menu bar manager
        - betterdisplay # display settings and manager
        - aldente # battery healthcare, do not let it charge to 100% to keep it healthy
       tags:
